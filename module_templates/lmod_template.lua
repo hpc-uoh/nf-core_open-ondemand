@@ -19,11 +19,11 @@ depends_on("nextflow")
 
 -- TODO
 -- Set Singularity Cache Dir
-setenv("NXF_SINGULARITY_CACHEDIR", "/cluster/tufts/biocontainers/nf-core/singularity-images")
+setenv("NXF_SINGULARITY_CACHEDIR", "/mnt/beegfs/shared_data/singularity-images/")
 
 -- TODO
 -- And assemble container command
-local pipeline_path = "/cluster/tufts/biocontainers/nf-core/pipelines/" .. myModuleName() .. "/" .. myModuleVersion() .. "/" .. "${VERSION_}"
+local pipeline_path = "/mnt/beegfs/shared_data/nf-core/" .. myModuleName() .. "/" .. myModuleVersion() .. "/" .. "${VERSION_}"
 local pipeline_launch = "nextflow run " .. pipeline_path
 
 -- Programs to setup in the shell

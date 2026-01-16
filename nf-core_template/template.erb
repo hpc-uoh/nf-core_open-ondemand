@@ -1,34 +1,31 @@
 ---
-cluster: "pax"
+cluster: "kutral"
 
 attributes:
-<%= File.read("/etc/ood/config/apps/dashboard/batch_connect/partials/cpu_partition.yml").indent(2) %>
-<%= File.read("/etc/ood/config/apps/dashboard/batch_connect/partials/num_cores_generic.yml").indent(2) %>
-<%= File.read("/etc/ood/config/apps/dashboard/batch_connect/partials/num_memory_generic.yml").indent(2) %>
 
-  executor:
-    label: Which nextflow executor to use?
-    widget: select
-    options:
-    - [
-        "slurm", "slurm",
-        data-hide-partition: true,
-        data-hide-num-cores: true,
-        data-hide-num-memory: true
-      ]
-    - ["local", "local"]
-    help: |
-      With slurm, tasks will be distributed to different nodes, local means all tasks will run on a single node.
+  num_cores:
+    widget: "hidden_field"
+    label: "Número de cores"
+    required: true
+    value: 1
+    min: 1
+
+  num_memory:
+    widget: "hidden_field"
+    label: "Memoria en GB"
+    required: true
+    value: 1
+    min: 1
 
   workdir:
     label: "Working Directory"
     widget: "path_selector"
-    directory: "/cluster/tufts"
+    directory: "/mnt/beegfs/home/"
     required: false
     label: Working directory
     favorites:
-        - /cluster/tufts
-        - /cluster/home
+        - /mnt/beegfs/home/
+        - /mnt/beegfs/labs/
     
   resume:
     label: Resume

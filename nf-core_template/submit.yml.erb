@@ -1,27 +1,14 @@
 ---
 batch_connect:
-  template: "basic"
+  template: basic
   conn_params:
     - working_path 
 
 script:
   email_on_started: true
   email_on_terminated: true
-  email: <%= ENV["USER"] %>@tufts.edu
+  email: "<%= `ldapsearch -x -LLL -H ldap://172.16.105.154 -b "uid=#{ENV['USER']},ou=people,dc=srv,dc=world" mail | awk -F": " '/^mail:/ {print $2}'`.strip %>"
   job_name: "OnDemand/nf-core_PIPELINE"
   native:
-    - "--time"
-    - "<%= bc_num_hours %>:0:0"
-    - "--nodes"
-    - "1"
-    <%- if executor == "slurm" -%>
-    - "-n"
-    - "2"
-    <%- elsif executor == "local" -%>
-    - "-n"
-    - "<%= num_cores %>"
-    - "--mem"
-    - "<%= num_memory %>"
-    - "-p"
-    - <%= partition %>
-    <%- end -%>                         
+    - "-n 1"
+    - "--mem=1G"   

@@ -218,3 +218,75 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+$(document).ready(function() {
+  console.log(" Buscando todos los checkbox en la página...");
+  $('input[type="checkbox"]').each(function() {
+    const checkbox = this;
+    $(checkbox).prop('checked', false);
+    // Recorre todos los atributos data-* del checkbox
+    Object.keys(checkbox.dataset).forEach(key => {
+      // Convierte el nombre de la propiedad dataset ("batchConnectSessionContextGenome")
+      // al formato original con guiones
+      const formatted = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+
+      console.log("Checkbox encontrado:", checkbox.name,"Guardado:", formatted);
+
+      const target = $(`#${CSS.escape(formatted)}`).closest('div');
+      target.hide();
+
+      const buttonBlock = $(`button[data-bs-target="#${formatted}_path_selector"]`).closest('div.mb-3');
+      buttonBlock.hide();
+
+      $(checkbox).on('change', function() {
+
+      if ($(checkbox).is(':checked')) {
+              console.log("Mostrando campo ", formatted, "target ");
+              target.show();
+              buttonBlock.show();
+      } else {
+              console.log("Ocultando campo ", formatted);
+              target.hide();
+              buttonBlock.hide();
+      }
+      });
+    });
+  });
+});
+
+
+
+/*
+$(document).ready(function() {
+  console.log("form.js cargado correctamente");
+
+  // Ejecuta cuando cambia el selector de "executor"
+  $('#batch_connect_session_context_executor').on('change', function() {
+    const selected = $(this).find('option:selected');
+
+    // Obtiene los atributos data-* del option seleccionado
+    const hideCores = selected.data('hide-num-cores');
+    const hideMemory = selected.data('hide-num-memory');
+
+    console.log("Executor seleccionado:", selected.val());
+    console.log("hide-num-cores:", hideCores, "| hide-num-memory:", hideMemory);
+
+    // Ocultar/mostrar campo de cores
+    const coresField = $('#batch_connect_session_context_num_cores').closest('div');
+    const coresMem = $('#batch_connect_session_context_mem_size').closest('div');
+
+    if (hideCores) {
+      coresField.hide();
+      coresMem.hide();
+      console.log("Ocultando campo num_cores");
+    } else {
+      coresField.show();
+      coresMem.show();
+      console.log("Mostrando campo num_cores");
+    }
+
+  });
+
+  // Ejecuta al cargar la página (para aplicar estado inicial)
+  $('#batch_connect_session_context_executor').trigger('change');
+});
+*/

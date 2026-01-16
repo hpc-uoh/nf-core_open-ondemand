@@ -1,7 +1,7 @@
 ---
 name: PIPELINE VERSION
-category: nf-core pipelines
-subcategory: SUBCATEGORY
+category: Interactive Apps
+subcategory: NF-core pipelines
 role: batch_connect
 description: |
   This app will launch the [PIPELINE](https://nf-co.re/PIPELINE) pipeline developed by nf-core community. 

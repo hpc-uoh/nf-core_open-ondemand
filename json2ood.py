@@ -34,7 +34,8 @@ def generate_parent_options(name, definition):
     label = definition.get("title", name.replace("_", " ").title())
     properties = definition.get("properties", {})
     # MODIFIED: Get only the first line of the description
-    help_text = definition.get("description", "").split('\n')[0]
+#    help_text = definition.get("description", "").split('\n')[0]
+    help_text = definition.get("description", "")
     output_lines.append(f"  {name.lower()}:") # new ood does not seem to suppport upper case
     output_lines.append(f"    label: \"{label}\"")
     output_lines.append(f"    widget: 'check_box'")
@@ -45,7 +46,7 @@ def generate_parent_options(name, definition):
         if prop == "email":  # Skip 'email' key
             continue
         fixed_prop = move_digits_to_end(prop)
-        output_lines.append(f"        hide-{fixed_prop}-when-un-checked: true")
+        output_lines.append(f"        batch_connect_session_context_{fixed_prop}: true")
 
     if help_text:
         output_lines.append(f"    help: \"{replace_apostrophes(help_text)}\"")
@@ -96,10 +97,10 @@ def write_widget(outfile, widget, value):
     # TODO update directories
     elif widget == "path_selector":
         outfile.write("    widget: path_selector\n")
-        outfile.write("    directory: /cluster/tufts\n")
+        outfile.write("    directory: /mnt/beegfs/home\n")
         outfile.write("    favorites:\n")
-        outfile.write("      - /cluster/tufts\n")
-        outfile.write("      - /cluster/home \n")
+        outfile.write("      - /mnt/beegfs/home/\n")
+        outfile.write("      - /mnt/beegfs/labs/ \n")
 
     elif widget == "number_field":
         outfile.write("    widget: number_field\n")
@@ -162,7 +163,8 @@ def process_properties(outfile, properties):
         if key == "genome":
             process_genome(outfile)
             # MODIFIED: Get only the first line of the description
-            write_help(outfile, value.get("description", "").split('\n')[0])
+#            write_help(outfile, value.get("description", "").split('\n')[0])
+            write_help(outfile, value.get("description", ""))
             outfile.write("\n")
             continue
         fixed_key = move_digits_to_end(key)
@@ -174,7 +176,8 @@ def process_properties(outfile, properties):
         widget = determine_widget_type(key, value)
         write_widget(outfile, widget, value)
         # MODIFIED: Get only the first line of the description
-        write_help(outfile, value.get("description", "").split('\n')[0])
+        #write_help(outfile, value.get("description", "").split('\n')[0])
+        write_help(outfile, value.get("description", ""))
         outfile.write("\n")
 
 # Function to determine widget type
@@ -253,8 +256,8 @@ for name, definition in definitions.items():
 formYmlOut.write("\nform:\n")
 
 default_form_fields = [
-    "bc_num_hours", "executor", "partition", "num_cores",
-    "num_memory",  "workdir", 
+#    "bc_num_hours", "executor", "partition", "num_cores", "num_memory"
+     "workdir", "num_cores", "num_memory",
 ]
 formYmlOut.write("\n".join(f"  - {field}" for field in default_form_fields) + "\n")
 

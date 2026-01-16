@@ -7,7 +7,7 @@ set -euo pipefail
 module purge
 
 # Load the required module
-module load nf-core
+module load PIPELINE
 module list
 
 # Set the working directory
@@ -44,12 +44,12 @@ fi
 
 # TODO 
 # Set the Singularity cache directory
-export NXF_SINGULARITY_CACHEDIR="/cluster/tufts/apps/container/biocontainers/nf-core/singularity-images"
+export NXF_SINGULARITY_CACHEDIR="/mnt/beegfs/shared_data/singularity-images/"
 
 # Clean up nf-params.json by removing empty values and replacing placeholders
 sed -i -E '/:[[:space:]]*,/d; /"[[:space:]]*"/d' nf-params.json
 
-export pipeline_version=/cluster/tufts/apps/container/biocontainers/nf-core/pipelines/PIPELINE/VERSION
+export pipeline_version=/mnt/beegfs/shared_data/nf-core/PIPELINE/VERSION
 export projectDir=$pipeline_version
 export baseDir=$pipeline_version
 
@@ -62,9 +62,32 @@ num_core="<%= context.num_cores %>"
 # Build Nextflow command
 nextflow_command=("nextflow run $pipeline_version -params-file nf-params.json")
 
-if [[ "<%= context.executor %>" == "slurm" ]]; then
+if [[ "slurm" == "slurm" ]]; then
     echo "Using Tufts profile (Slurm execution)."  # TODO
-    nextflow_command+=("-profile tufts")
+    cat <<EOF > kutral.config
+process {
+    resourceLimits = [
+        cpus: $num_core,
+        memory: "$num_memory"
+    ]
+}
+profiles {
+    kutral {
+        singularity.enabled    = true
+        singularity.autoMounts = true
+        singularity.runOptions = ' --bind /mnt/beegfs/labs/ '
+        docker.enabled         = false
+        podman.enabled         = false
+        shifter.enabled        = false
+        charliecloud.enabled   = false
+        process.executor = 'slurm'
+        process.queue = 'ngen-ko'
+        executor.queueSize = 40
+        cleanup = true
+    }
+}
+EOF
+    nextflow_command+=("-profile kutral")
 else
     echo "Running in local mode (single-node execution)."
 
